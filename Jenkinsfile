@@ -1,25 +1,37 @@
 pipeline {
-
     agent any
-
-    tools {
-        jdk 'JAVA_HOME'
-        maven 'MAVEN3'
-    }
 
     stages {
 
-        stage('GIT') {
+        stage('Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/hwafa/timesheetproject.git'
+                echo 'Récupération du code source...'
+                checkout scm
             }
         }
 
-        stage('Compile Stage') {
+        stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                echo 'Compilation du projet...'
+                sh 'mvn clean install'
             }
+        }
+
+        stage('Tests') {
+            steps {
+                echo 'Exécution des tests...'
+                sh 'mvn test'
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "🎉 Build réussi !"
+        }
+        failure {
+            echo "❌ Build échoué !"
         }
     }
 }
