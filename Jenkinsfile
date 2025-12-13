@@ -10,28 +10,41 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Maven') {
             steps {
-                echo 'Compilation du projet...'
-                sh 'mvn clean install'
+                echo 'Build du projet Spring Boot...'
+                sh 'mvn clean install -DskipTests'
             }
         }
 
-        stage('Tests') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Exécution des tests...'
-                sh 'mvn test'
+                echo 'Construction de l’image Docker...'
+                sh 'docker build -t username/springboot-mysql:latest .'
             }
         }
 
+        stage('Push Docker Image') {
+            steps {
+                echo 'Push de l’image Docker vers Docker Hub...'
+                sh 'docker push username/springboot-mysql:latest'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo 'Déploiement sur Kubernetes...'
+                sh 'kubectl apply -f k8s/ -n devops'
+            }
+        }
     }
 
     post {
         success {
-            echo "🎉 Build réussi !"
+            echo '✅ Pipeline exécuté avec succès'
         }
         failure {
-            echo "❌ Build échoué !"
+            echo '❌ Erreur dans le pipeline'
         }
     }
 }
