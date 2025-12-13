@@ -20,14 +20,14 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Construction de l’image Docker...'
-                sh 'docker build -t username/springboot-mysql:latest .'
+                sh 'docker build -t hanin/springboot-mysql:latest .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 echo 'Push de l’image Docker vers Docker Hub...'
-                sh 'docker push username/springboot-mysql:latest'
+                sh 'docker push hanin/springboot-mysql:latest'
             }
         }
 
